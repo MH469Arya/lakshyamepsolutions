@@ -28,16 +28,12 @@
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
+        html,
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            line-height: 1.7;
+            scroll-behavior: smooth;
             overflow-x: hidden;
+            width: 100%;
+            position: relative;
         }
 
         h1,
@@ -927,6 +923,15 @@
                 color: var(--white);
             }
 
+            /* Force white hamburger when menu is open for contrast */
+            .menu-toggle.active {
+                color: var(--white) !important;
+            }
+
+            body.menu-open {
+                overflow: hidden;
+            }
+
             /* Hamburger transform to X */
             .menu-toggle.active span:nth-child(1) {
                 transform: translateY(9px) rotate(45deg);
@@ -1443,13 +1448,16 @@
 
         // Glassmorphism Header Style on Scroll
         const header = document.getElementById('header');
-        window.addEventListener('scroll', () => {
+        function updateHeader() {
             if (window.scrollY > 50) {
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
             }
-        });
+        }
+        window.addEventListener('scroll', updateHeader);
+        window.addEventListener('load', updateHeader);
+        updateHeader(); // Run on init
 
         // Mobile Responsive Menu Toggle
         const menuToggle = document.getElementById('menuToggle');
@@ -1459,6 +1467,7 @@
             menuToggle.addEventListener('click', () => {
                 navLinks.classList.toggle('show');
                 menuToggle.classList.toggle('active');
+                document.body.classList.toggle('menu-open');
             });
         }
 
@@ -1467,6 +1476,7 @@
             link.addEventListener('click', () => {
                 navLinks.classList.remove('show');
                 menuToggle.classList.remove('active');
+                document.body.classList.remove('menu-open');
             });
         });
     </script>
