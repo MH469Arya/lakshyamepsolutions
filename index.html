@@ -59,6 +59,8 @@
             position: relative;
         }
 
+
+
         /* Abstract Geometric Shapes */
         .shape {
             position: absolute;
@@ -101,6 +103,8 @@
                 transform: translateY(0) rotate(0deg);
             }
         }
+
+
 
         header {
             position: fixed;
@@ -369,15 +373,107 @@
             flex-direction: column;
         }
 
-        .category-card h3 {
-            font-size: 1.4rem;
-            color: var(--navy);
-            margin-bottom: 1rem;
-        }
-
         .category-card p {
             color: var(--text-muted);
             font-size: 1rem;
+        }
+
+        /* Swipable Card Logic */
+        .category-card.swipable {
+            overflow: hidden;
+            height: 480px;
+            /* Fixed height to prevent layout shift during swipe */
+        }
+
+        .card-inner {
+            display: flex;
+            width: 200%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-front,
+        .card-back {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-back {
+            background: var(--bg-light);
+            padding: 2.5rem 2rem;
+            overflow-y: auto;
+        }
+
+        .swiped .card-inner {
+            transform: translateX(-50%);
+        }
+
+        .swipe-arrow {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: var(--navy);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .swipe-arrow:hover {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .swipe-arrow svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .details-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+
+        .details-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            line-height: 1.4;
+        }
+
+        .details-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .card-back h4 {
+            color: var(--navy);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .card-back p {
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
         }
 
         /* WHY US - Bento Box Grid */
@@ -572,22 +668,18 @@
         #reliability::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 275%;
-            height: 275%;
-            background-image: url('LAKSHYA (1).png');
-            background-size: contain;
-            /* Using contain keeps the logo from being chopped off */
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0.15;
-            /* Dialed back opacity for subtlety */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 50px 50px;
             z-index: 0;
-            /* Soft Emboss with #0d7bff color - Glossiness reduced */
-            filter: drop-shadow(-1px -1px 3px rgba(255, 255, 255, 0.04)) drop-shadow(3px 3px 8px rgba(13, 123, 255, 0.8));
         }
+
+
 
         #reliability .section-header,
         #reliability p {
@@ -679,19 +771,24 @@
 
         .c-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
+            gap: 0.5rem;
         }
 
         .c-item span {
             font-size: 1.1rem;
             color: var(--navy);
             font-weight: 500;
+            line-height: 1.5;
+            flex: 1;
         }
 
         .c-item strong {
             display: inline-block;
-            width: 90px;
+            min-width: 90px;
             color: var(--accent);
+            margin-top: 2px;
+            /* Slight offset to align with the first line of text */
         }
 
         .contact-logo {
@@ -761,105 +858,156 @@
             display: none;
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: var(--navy);
             cursor: pointer;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 30px;
+            height: 3px;
+            background: currentColor;
+            margin: 6px auto;
+            transition: 0.3s;
         }
 
         @media (max-width: 768px) {
+            header {
+                padding: 15px 5%;
+            }
+
             nav ul {
                 position: fixed;
-                top: 70px;
+                top: 0;
                 left: -100%;
                 width: 100%;
-                height: calc(100vh - 70px);
+                height: 100vh;
                 background: var(--navy);
-                /* Changed to navy for better contrast with white text */
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                transition: 0.4s ease-in-out;
+                transition: 0.5s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+                opacity: 0;
+                visibility: hidden;
             }
 
             nav ul.show {
                 left: 0;
+                opacity: 1;
+                visibility: visible;
+            }
+
+            nav li {
+                margin: 1.5rem 0;
             }
 
             nav a {
-                font-size: 1.2rem;
+                font-size: 1.5rem;
                 color: var(--white) !important;
-                /* Force white on mobile menu for visibility */
+                letter-spacing: 2px;
+                text-transform: uppercase;
             }
 
             .menu-toggle {
                 display: block;
+                z-index: 1100;
                 color: var(--navy);
-                /* Default hamburger color */
-                z-index: 1001;
-                /* Ensure it stays above everything */
+            }
+
+            header.scrolled .menu-toggle {
+                color: var(--navy);
             }
 
             header:not(.scrolled) .menu-toggle {
                 color: var(--white);
-                /* White hamburger when at the top */
             }
 
-            section {
-                padding: 80px 5% 60px;
-                /* Reduced vertical padding for mobile */
+            /* Hamburger transform to X */
+            .menu-toggle.active span:nth-child(1) {
+                transform: translateY(9px) rotate(45deg);
+            }
+
+            .menu-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-toggle.active span:nth-child(3) {
+                transform: translateY(-9px) rotate(-45deg);
             }
 
             #hero {
-                padding-top: 120px;
+                padding-top: 140px;
                 min-height: auto;
-                padding-bottom: 100px;
+                padding-bottom: 80px;
             }
 
             #hero h1 {
-                font-size: 2.2rem;
+                font-size: 1.85rem;
+                /* Reduced for mobile fit */
+                margin-bottom: 1.5rem;
             }
 
             #hero p {
                 font-size: 1rem;
+                line-height: 1.6;
             }
 
             .section-header h2 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
 
             .categories-grid {
                 grid-template-columns: 1fr;
-                /* Switch to 1 column */
-                gap: 2rem;
+                gap: 2.5rem;
             }
 
             .industries-grid {
                 grid-template-columns: 1fr;
-                /* Switch to 1 column */
                 gap: 1.5rem;
             }
 
             .industries-grid li {
                 height: 220px;
-                /* Make industry cards slightly shorter on mobile */
+            }
+
+            .bento-grid {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .bento-item {
+                padding: 1.5rem;
+                font-size: 1rem;
             }
 
             #reliability {
                 padding: 80px 5%;
             }
 
-            #reliability::before {
-                width: 150%;
-                /* Adjust background stretch for narrow screens */
-                height: 150%;
-                background-size: cover;
-                /* Fall back to cover on mobile to fill area */
-                opacity: 0.10;
-                /* Reduce opacity slightly to maintain readability on smaller screens */
+            #reliability p {
+                font-size: 1.1rem;
             }
 
             .contact-logo img {
-                max-width: 300px;
+                max-width: 260px;
+            }
+
+            .c-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.2rem;
+                margin-bottom: 1rem;
+            }
+
+            .c-item strong {
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
             }
         }
     </style>
@@ -872,7 +1020,11 @@
 
     <header id="header">
         <a href="#hero"><img src="LAKSHYA TP BG.png" alt="Lakshya MEP Solutions Logo" class="logo"></a>
-        <button class="menu-toggle" id="menuToggle">☰</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
         <nav>
             <ul id="navLinks">
                 <li><a href="#hero">Home</a></li>
@@ -900,69 +1052,274 @@
         </div>
         <div class="categories-grid">
 
-            <div class="category-card reveal">
-                <div class="img-wrapper">
-                    <img src="Industrial Power tools.jpeg" alt="Industrial Power Tools">
-                </div>
-                <div class="card-content">
-                    <h3>Industrial Power Tools</h3>
-                    <p>Professional-grade drilling, cutting, fastening and grinding tools designed for demanding
-                        mechanical and electrical installations.</p>
-                </div>
-            </div>
-
-            <div class="category-card reveal reveal-delay-1">
-                <div class="img-wrapper">
-                    <img src="Electrical Fitting.jpeg" alt="Electrical Fittings">
-                </div>
-                <div class="card-content">
-                    <h3>Electrical Fittings</h3>
-                    <p>Industrial cables, conduits, switchgear components, panels and essential electrical hardware
-                        built for safe and efficient infrastructure systems.</p>
-                </div>
-            </div>
-
-            <div class="category-card reveal reveal-delay-2">
-                <div class="img-wrapper">
-                    <img src="Plumbing & Piping.jpeg" alt="Plumbing & Piping Systems">
-                </div>
-                <div class="card-content">
-                    <h3>Plumbing & Piping Systems</h3>
-                    <p>Comprehensive range of industrial piping solutions including pipes, fittings, valves, accessories
-                        and fluid-handling components suitable for mechanical and building services applications.</p>
-                </div>
-            </div>
-
-            <div class="category-card reveal">
-                <div class="img-wrapper">
-                    <img src="HVAC.jpeg" alt="HVAC Tools & Components">
-                </div>
-                <div class="card-content">
-                    <h3>HVAC Tools & Components</h3>
-                    <p>Installation tools, ventilation accessories and climate-control system components supporting
-                        commercial and industrial HVAC projects.</p>
-                </div>
-            </div>
-
-            <div class="category-card reveal reveal-delay-1">
-                <div class="img-wrapper">
-                    <img src="Fire Fighting.jpeg" alt="Fire Safety Equipment">
-                </div>
-                <div class="card-content">
-                    <h3>Fire Safety Equipment</h3>
-                    <p>Fire alarm devices, detection systems, safety accessories and compliance-driven components
-                        designed for secure installations.</p>
+            <div class="category-card swipable reveal" id="power-tools-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="img-wrapper">
+                            <img src="Industrial Power tools.jpeg" alt="Industrial Power Tools">
+                        </div>
+                        <div class="card-content">
+                            <h3>Industrial Power Tools</h3>
+                            <p>Professional-grade drilling, cutting, fastening and grinding tools designed for demanding
+                                mechanical and electrical installations.</p>
+                        </div>
+                        <button class="swipe-arrow" onclick="toggleSwipe('power-tools-card')" aria-label="Show Details">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="card-back">
+                        <h4>Industrial Power Tools Details</h4>
+                        <p>Professional-grade tools engineered for high-performance mechanical and electrical
+                            installations.</p>
+                        <p>We supply a comprehensive range of industrial power tools suitable for fabrication,
+                            installation, maintenance, and heavy-duty site applications.</p>
+                        <p><strong>Product Range Includes:</strong></p>
+                        <ul class="details-list">
+                            <li>Rotary hammer drills and impact drills</li>
+                            <li>Magnetic core drilling machines</li>
+                            <li>Angle grinders and die grinders</li>
+                            <li>Cut-off machines and metal cutting saws</li>
+                            <li>Impact wrenches and torque tools</li>
+                            <li>Cordless drilling and fastening tools</li>
+                            <li>Reciprocating saws and circular saws</li>
+                            <li>Heat guns and industrial blowers</li>
+                            <li>Pneumatic drills and grinders</li>
+                            <li>Industrial fastening and anchoring tools</li>
+                            <li>Workshop and maintenance tool kits</li>
+                        </ul>
+                        <button class="swipe-arrow" onclick="toggleSwipe('power-tools-card')" aria-label="Show Front">
+                            <svg viewBox="0 0 24 24" style="transform: rotate(180deg);">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div class="category-card reveal reveal-delay-2">
-                <div class="img-wrapper">
-                    <img src="Mechanical Hardware.jpeg" alt="Mechanical Hardware">
+            <div class="category-card swipable reveal reveal-delay-1" id="electrical-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="img-wrapper">
+                            <img src="Electrical Fitting.jpeg" alt="Electrical Fittings">
+                        </div>
+                        <div class="card-content">
+                            <h3>Electrical Fittings</h3>
+                            <p>Industrial cables, conduits, switchgear components, panels and essential electrical
+                                hardware
+                                built for safe and efficient infrastructure systems.</p>
+                        </div>
+                        <button class="swipe-arrow" onclick="toggleSwipe('electrical-card')" aria-label="Show Details">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="card-back">
+                        <h4>Electrical Fittings & Infrastructure Materials</h4>
+                        <p>Reliable electrical components designed for safe and efficient industrial infrastructure.</p>
+                        <p>We supply essential electrical materials required for industrial installations, control
+                            systems and power distribution.</p>
+                        <p><strong>Product Range Includes:</strong></p>
+                        <ul class="details-list">
+                            <li>LT and HT industrial cables</li>
+                            <li>Flexible control and instrumentation cables</li>
+                            <li>PVC / GI conduits and accessories</li>
+                            <li>Cable trays and raceways</li>
+                            <li>Switchgear components (MCB, MCCB, ACB)</li>
+                            <li>Distribution boards and control panels</li>
+                            <li>Industrial switches and sockets</li>
+                            <li>Cable glands and lugs</li>
+                            <li>Earthing systems and accessories</li>
+                            <li>Panel mounting hardware</li>
+                            <li>Wiring accessories and insulation materials</li>
+                        </ul>
+                        <button class="swipe-arrow" onclick="toggleSwipe('electrical-card')" aria-label="Show Front">
+                            <svg viewBox="0 0 24 24" style="transform: rotate(180deg);">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <div class="card-content">
-                    <h3>Mechanical Hardware</h3>
-                    <p>Industrial fasteners, anchoring systems, supports, fabrication accessories and essential
-                        installation hardware for integrated MEP execution.</p>
+            </div>
+
+            <div class="category-card swipable reveal reveal-delay-2" id="plumbing-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="img-wrapper">
+                            <img src="Plumbing & Piping.jpeg" alt="Plumbing & Piping Systems">
+                        </div>
+                        <div class="card-content">
+                            <h3>Plumbing & Piping Systems</h3>
+                            <p>Comprehensive range of industrial piping solutions including pipes, fittings, valves,
+                                accessories
+                                and fluid-handling components suitable for mechanical and building services
+                                applications.</p>
+                        </div>
+                        <button class="swipe-arrow" onclick="toggleSwipe('plumbing-card')" aria-label="Show Details">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="card-back">
+                        <h4>Plumbing & Piping Systems</h4>
+                        <p>Comprehensive industrial piping solutions for fluid handling and mechanical systems.</p>
+                        <p>We supply a wide range of piping materials and accessories suitable for industrial,
+                            commercial and utility applications.</p>
+                        <p><strong>Product Range Includes:</strong></p>
+                        <ul class="details-list">
+                            <li>CPVC, UPVC, HDPE and PPR pipes</li>
+                            <li>MS, GI and stainless steel pipes</li>
+                            <li>Pipe fittings (elbows, tees, reducers, couplings)</li>
+                            <li>Industrial valves (ball, gate, butterfly, check valves)</li>
+                            <li>Flanges and gaskets</li>
+                            <li>Pipe joining systems and adhesives</li>
+                            <li>Pipe clamps and supports</li>
+                            <li>Flexible connectors</li>
+                            <li>Water supply and drainage components</li>
+                            <li>Industrial fluid handling accessories</li>
+                        </ul>
+                        <button class="swipe-arrow" onclick="toggleSwipe('plumbing-card')" aria-label="Show Front">
+                            <svg viewBox="0 0 24 24" style="transform: rotate(180deg);">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-card swipable reveal" id="hvac-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="img-wrapper">
+                            <img src="HVAC.jpeg" alt="HVAC Tools & Components">
+                        </div>
+                        <div class="card-content">
+                            <h3>HVAC Tools & Components</h3>
+                            <p>Installation tools, ventilation accessories and climate-control system components
+                                supporting
+                                commercial and industrial HVAC projects.</p>
+                        </div>
+                        <button class="swipe-arrow" onclick="toggleSwipe('hvac-card')" aria-label="Show Details">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="card-back">
+                        <h4>HVAC Tools & Components</h4>
+                        <p>Installation and maintenance solutions for commercial and industrial climate-control systems.
+                        </p>
+                        <p>We supply specialized tools and components required for HVAC installation and servicing.</p>
+                        <p><strong>Product Range Includes:</strong></p>
+                        <ul class="details-list">
+                            <li>Refrigeration tool kits</li>
+                            <li>Tube cutters and flaring tools</li>
+                            <li>Vacuum pumps and manifolds</li>
+                            <li>Charging hoses and gauges</li>
+                            <li>Insulation materials</li>
+                            <li>Vibration isolators</li>
+                            <li>Air distribution accessories</li>
+                            <li>Duct accessories and supports</li>
+                            <li>HVAC mounting systems</li>
+                            <li>Temperature and pressure measuring instruments</li>
+                            <li>Maintenance and servicing tools</li>
+                        </ul>
+                        <button class="swipe-arrow" onclick="toggleSwipe('hvac-card')" aria-label="Show Front">
+                            <svg viewBox="0 0 24 24" style="transform: rotate(180deg);">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-card swipable reveal reveal-delay-1" id="fire-safety-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="img-wrapper">
+                            <img src="Fire Fighting.jpeg" alt="Fire Safety Equipment">
+                        </div>
+                        <div class="card-content">
+                            <h3>Fire Safety Equipment</h3>
+                            <p>Fire alarm devices, detection systems, safety accessories and compliance-driven
+                                components
+                                designed for secure installations.</p>
+                        </div>
+                        <button class="swipe-arrow" onclick="toggleSwipe('fire-safety-card')" aria-label="Show Details">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="card-back">
+                        <h4>Fire Safety Equipment</h4>
+                        <p>Compliance-focused fire detection and safety components for secure installations.</p>
+                        <p>We supply essential fire safety materials for industrial and commercial safety systems.</p>
+                        <p><strong>Product Range Includes:</strong></p>
+                        <ul class="details-list">
+                            <li>Fire alarm control panels</li>
+                            <li>Smoke and heat detectors</li>
+                            <li>Manual call points</li>
+                            <li>Hooters and alarm sounders</li>
+                            <li>Fire-rated cables</li>
+                            <li>Emergency exit lights</li>
+                            <li>Fire extinguishers</li>
+                            <li>Installation and mounting accessories</li>
+                            <li>Safety signage and compliance hardware</li>
+                        </ul>
+                        <button class="swipe-arrow" onclick="toggleSwipe('fire-safety-card')" aria-label="Show Front">
+                            <svg viewBox="0 0 24 24" style="transform: rotate(180deg);">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-card swipable reveal reveal-delay-2" id="mechanical-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="img-wrapper">
+                            <img src="Mechanical Hardware.jpeg" alt="Mechanical Hardware">
+                        </div>
+                        <div class="card-content">
+                            <h3>Mechanical Hardware</h3>
+                            <p>Industrial fasteners, anchoring systems, supports, fabrication accessories and essential
+                                installation hardware for integrated MEP execution.</p>
+                        </div>
+                        <button class="swipe-arrow" onclick="toggleSwipe('mechanical-card')" aria-label="Show Details">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="card-back">
+                        <h4>Mechanical Hardware & Installation Systems</h4>
+                        <p>Essential hardware solutions for structural and mechanical installations.</p>
+                        <p>We supply durable installation hardware and fabrication accessories for integrated MEP
+                            execution.</p>
+                        <p><strong>Product Range Includes:</strong></p>
+                        <ul class="details-list">
+                            <li>Industrial fasteners (bolts, nuts, washers)</li>
+                            <li>Chemical and mechanical anchors</li>
+                            <li>Threaded rods and studs</li>
+                            <li>Pipe clamps and channel supports</li>
+                            <li>Mounting brackets and base plates</li>
+                            <li>Strut channels and framing systems</li>
+                            <li>Fabrication consumables</li>
+                            <li>Metal cutting discs and abrasives</li>
+                            <li>Structural support hardware</li>
+                            <li>Workshop and site installation accessories</li>
+                        </ul>
+                        <button class="swipe-arrow" onclick="toggleSwipe('mechanical-card')" aria-label="Show Front">
+                            <svg viewBox="0 0 24 24" style="transform: rotate(180deg);">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -1044,6 +1401,10 @@
                         <strong>Phone:</strong>
                         <span>+91 9137818532</span>
                     </div>
+                    <div class="c-item">
+                        <strong>Address:</strong>
+                        <span>2201, Shree Gopinath Subime, Parsik Nagar, kalwa, Thane - 400605</span>
+                    </div>
                 </div>
             </div>
 
@@ -1058,6 +1419,12 @@
     </footer>
 
     <script>
+        // Card Swipe Toggle
+        function toggleSwipe(cardId) {
+            const card = document.getElementById(cardId);
+            card.classList.toggle('swiped');
+        }
+
         // Scroll Engine & Reveal Animation
         const observerOptions = {
             threshold: 0.15,
@@ -1091,6 +1458,7 @@
         if (menuToggle) {
             menuToggle.addEventListener('click', () => {
                 navLinks.classList.toggle('show');
+                menuToggle.classList.toggle('active');
             });
         }
 
@@ -1098,6 +1466,7 @@
         navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 navLinks.classList.remove('show');
+                menuToggle.classList.remove('active');
             });
         });
     </script>
