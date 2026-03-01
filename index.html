@@ -909,10 +909,22 @@
                 text-transform: uppercase;
             }
 
+            nav {
+                order: 2;
+                display: contents;
+                /* Remove nav container from flex flow */
+            }
+
             .menu-toggle {
                 display: block;
                 z-index: 1100;
                 color: var(--navy);
+                margin-left: auto;
+                /* Push to the far right */
+                padding: 10px;
+                /* Increase click area */
+                margin-right: -10px;
+                /* Offset padding for visual alignment */
             }
 
             header.scrolled .menu-toggle {
@@ -1025,11 +1037,6 @@
 
     <header id="header">
         <a href="#hero"><img src="LAKSHYA TP BG.png" alt="Lakshya MEP Solutions Logo" class="logo"></a>
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
         <nav>
             <ul id="navLinks">
                 <li><a href="#hero">Home</a></li>
@@ -1040,6 +1047,11 @@
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </header>
 
     <section id="hero">
